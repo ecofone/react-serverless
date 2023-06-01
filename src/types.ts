@@ -1,8 +1,8 @@
-export interface Input {
+export type Input = {
   title: string | null;
   file: string | null;
   path: string | null;
-}
+};
 
 export type eventTarget = {
   name: string;
@@ -16,15 +16,20 @@ export enum AppActionKind {
   CHANGE_FORM_VISIBILITY = "CHANGE_FORM_VISIBILITY",
 }
 
+export type Item = {
+  title: string;
+  path: string;
+};
+
 export type AppState = {
   inputs: Input;
-  items: string[];
+  items: Item[];
   isFormVisible: boolean;
 };
 
 export type AppActionPayload = {
   eventTarget?: eventTarget;
-  item?: string;
+  item?: Item;
   isFormVisible?: boolean;
 };
 

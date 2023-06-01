@@ -1,8 +1,7 @@
 import { List } from "./List";
 import { useReducer } from "react";
-import Navbar from "./Navbar";
-import { UploadForm } from "./Uploadform";
 import { AppAction, AppActionKind, AppState, Input } from "../types";
+import { Layout } from "./Layout";
 
 const reducer = (state: AppState, action: AppAction): AppState => {
   switch (action.type) {
@@ -25,7 +24,7 @@ const reducer = (state: AppState, action: AppAction): AppState => {
               path: null,
             },
             items: action.payload.item
-              ? [...state.items, action.payload.item]
+              ? [...state.items, { ...action.payload.item }]
               : [...state.items],
             isFormVisible: false,
           }
@@ -62,36 +61,30 @@ const App = () => {
 
   const handleOnSubmit = (event: any) => {
     event.preventDefault();
-    dispatch({
-      type: AppActionKind.ADD_ITEM,
-      payload: { item: state.inputs.path ?? undefined },
-    });
+    if (state.inputs.title && state.inputs.path) {
+      dispatch({
+        type: AppActionKind.ADD_ITEM,
+        payload: {
+          item: { title: state.inputs.title, path: state.inputs.path },
+        },
+      });
+    }
   };
 
   const toggleFormVisible = () =>
     dispatch({ type: AppActionKind.CHANGE_FORM_VISIBILITY, payload: {} });
   return (
-    <>
-      <Navbar />
-      <div className="container text-center mt-5">
-        <button
-          className="btn btn-success float-end"
-          onClick={toggleFormVisible}
-        >
-          {state.isFormVisible ? "Close" : "+ Add"}
-        </button>
-        <div className="clearfix mb-4"></div>
-        <UploadForm
-          inputs={state.inputs}
-          isVisible={state.isFormVisible}
-          onChange={handleOnChange}
-          onSubmit={handleOnSubmit}
-        />
-        <h1>Gallery</h1>
-        {`You have ${state.items.length} images`}
-        <List items={state.items} />
-      </div>
-    </>
+    <Layout
+      toggleForm={toggleFormVisible}
+      isFormVisible={state.isFormVisible}
+      onChange={handleOnChange}
+      onSubmit={handleOnSubmit}
+      inputs={state.inputs}
+    >
+      <h1>Gallery</h1>
+      {`You have ${state.items.length} images`}
+      <List items={state.items} />
+    </Layout>
   );
 };
 
