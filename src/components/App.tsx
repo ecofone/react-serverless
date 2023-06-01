@@ -1,46 +1,75 @@
 import { List } from "./List";
-import { useState } from "react";
-import { photos } from "../data";
+import { useReducer } from "react";
 import Navbar from "./Navbar";
 import { UploadForm } from "./Uploadform";
-import { Input } from "../types";
+import { AppAction, AppActionKind, AppState, Input } from "../types";
 
-function App() {
-  const [inputs, setInputs] = useState<Input>({
+const reducer = (state: AppState, action: AppAction): AppState => {
+  switch (action.type) {
+    case AppActionKind.UPDATE_INPUT:
+      const inputs: Input =
+        action.payload.eventTarget?.name === "title"
+          ? { ...state.inputs, title: action.payload.eventTarget.value }
+          : {
+              ...state.inputs,
+              file: action.payload.eventTarget?.files[0],
+              path: URL.createObjectURL(action.payload.eventTarget?.files[0]),
+            };
+      return { ...state, inputs };
+    case AppActionKind.ADD_ITEM:
+      return state.inputs.path
+        ? {
+            inputs: {
+              title: null,
+              file: null,
+              path: null,
+            },
+            items: action.payload.item
+              ? [...state.items, action.payload.item]
+              : [...state.items],
+            isFormVisible: false,
+          }
+        : { ...state };
+    case AppActionKind.CHANGE_FORM_VISIBILITY:
+      return {
+        ...state,
+        isFormVisible: action.payload.isFormVisible ?? !state.isFormVisible,
+      };
+  }
+};
+
+const initialState: AppState = {
+  inputs: {
     title: null,
     file: null,
     path: null,
-  });
-  const [items, setItems] = useState<string[]>(photos);
-  const [isFormVisible, setIsFormVisible] = useState<boolean>(false);
+  },
+  items: [],
+  isFormVisible: false,
+};
+
+const App = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleOnChange = (event: any) => {
-    const { name, value, files } = event.target;
-    console.log(name, value, files);
-    if (!name) {
-      return;
-    }
-    if (name === "title") {
-      setInputs({ ...inputs, title: value });
-    } else {
-      setInputs({
-        ...inputs,
-        file: files[0],
-        path: URL.createObjectURL(files[0]),
+    if (event.target.name) {
+      dispatch({
+        type: AppActionKind.UPDATE_INPUT,
+        payload: { eventTarget: event.target },
       });
     }
   };
 
   const handleOnSubmit = (event: any) => {
     event.preventDefault();
-    if (inputs.path) {
-      setItems([...items, inputs.path]);
-    }
-    setInputs({ title: null, file: null, path: null });
-    setIsFormVisible(false);
+    dispatch({
+      type: AppActionKind.ADD_ITEM,
+      payload: { item: state.inputs.path ?? undefined },
+    });
   };
 
-  const toggleFormVisible = () => setIsFormVisible(!isFormVisible);
+  const toggleFormVisible = () =>
+    dispatch({ type: AppActionKind.CHANGE_FORM_VISIBILITY, payload: {} });
   return (
     <>
       <Navbar />
@@ -49,21 +78,21 @@ function App() {
           className="btn btn-success float-end"
           onClick={toggleFormVisible}
         >
-          {isFormVisible ? "Close" : "+ Add"}
+          {state.isFormVisible ? "Close" : "+ Add"}
         </button>
         <div className="clearfix mb-4"></div>
         <UploadForm
-          inputs={inputs}
-          isVisible={isFormVisible}
+          inputs={state.inputs}
+          isVisible={state.isFormVisible}
           onChange={handleOnChange}
           onSubmit={handleOnSubmit}
         />
         <h1>Gallery</h1>
-        {`You have ${items.length} images`}
-        <List items={items} />
+        {`You have ${state.items.length} images`}
+        <List items={state.items} />
       </div>
     </>
   );
-}
+};
 
 export default App;
