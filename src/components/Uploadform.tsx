@@ -1,28 +1,47 @@
-import { useMemo } from "react";
-import { Input } from "../types";
+import { useContext, useMemo } from "react";
+import { AppActionKind, AppContextType } from "../types";
 import { Preview } from "./Preview";
+import { AppContext } from "./Context";
 
-export const UploadForm: React.FC<{
-  inputs: Input;
-  isVisible: boolean;
-  onChange: (event: any) => void;
-  onSubmit: (event: any) => void;
-}> = ({ inputs, isVisible, onChange, onSubmit }) => {
+export const UploadForm: React.FC = () => {
+  const { state, dispatch } = useContext(AppContext) as AppContextType;
+
+  const handleOnChange = (event: any) => {
+    if (event.target.name) {
+      dispatch({
+        type: AppActionKind.UPDATE_INPUT,
+        payload: { eventTarget: event.target },
+      });
+    }
+  };
+
+  const handleOnSubmit = (event: any) => {
+    event.preventDefault();
+    if (state.inputs.title && state.inputs.path) {
+      dispatch({
+        type: AppActionKind.ADD_ITEM,
+        payload: {
+          item: { title: state.inputs.title, path: state.inputs.path },
+        },
+      });
+    }
+  };
+
   const isDisabled = useMemo(
-    () => Object.values(inputs).some((value) => !value),
-    [inputs]
+    () => Object.values(state.inputs).some((value) => !value),
+    [state.inputs]
   );
   return (
     <>
-      {isVisible && (
+      {state.isFormVisible && (
         <>
           <p className="display-6 text-center mb-3">Upload Stock Image</p>
-          <Preview {...inputs} />
+          <Preview />
           <div className="mb-5 d-flex align-items-center justify-content-center">
             <form
               className="mb-2"
               style={{ textAlign: "left" }}
-              onSubmit={onSubmit}
+              onSubmit={handleOnSubmit}
             >
               <div className="mb-3">
                 <input
@@ -31,7 +50,7 @@ export const UploadForm: React.FC<{
                   name="title"
                   placeholder="title"
                   aria-describedby="text"
-                  onChange={onChange}
+                  onChange={handleOnChange}
                 />
               </div>
               <div className="mb-3">
@@ -39,7 +58,7 @@ export const UploadForm: React.FC<{
                   type="file"
                   className="form-control"
                   name="file"
-                  onChange={onChange}
+                  onChange={handleOnChange}
                 />
               </div>
               <button

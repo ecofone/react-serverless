@@ -1,3 +1,5 @@
+import React from "react";
+
 export type Input = {
   title: string | null;
   file: string | null;
@@ -36,4 +38,9 @@ export type AppActionPayload = {
 export type AppAction = {
   type: AppActionKind;
   payload: AppActionPayload;
+};
+
+export type AppContextType = {
+  state: AppState;
+  dispatch: React.Dispatch<AppAction>;
 };

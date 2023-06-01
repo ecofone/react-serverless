@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Card } from "./Card";
-import { Item } from "../types";
+import { AppContextType } from "../types";
+import { AppContext } from "./Context";
 
-export const List: React.FC<{ items: Item[] }> = ({ items }) => {
+export const List: React.FC = () => {
+  const { state } = useContext(AppContext) as AppContextType;
   return (
     <div className="row">
-      {items.map((item, index) => (
+      {state.items.map((item, index) => (
         <Card key={index} item={item} />
       ))}
     </div>
