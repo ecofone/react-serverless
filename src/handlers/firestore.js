@@ -30,12 +30,13 @@ export const FireStore = {
       const index = Math.floor(Math.random() * 1000000000);
       try {
         const docRef = doc(db, collectionName, `${index}`);
+        const createdAt = serverTimestamp();
         await setDoc(docRef, {
           title: inputs.title,
           path: inputs.path,
-          createdAt: serverTimestamp(),
+          createdAt,
         });
-        resolve("Successfully Inserted");
+        resolve(createdAt);
       } catch (e) {
         console.error(e);
       }

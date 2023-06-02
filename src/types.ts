@@ -22,6 +22,7 @@ export enum AppActionKind {
 export type Item = {
   title: string;
   path: string;
+  createdAt: any;
 };
 
 export type AppState = {

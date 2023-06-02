@@ -3,7 +3,7 @@ import { AppActionKind, AppContextType } from "../types";
 import { Preview } from "./Preview";
 import { AppContext } from "./Context";
 import { FireStore } from "../handlers/firestore";
-const { writeDoc } = FireStore;
+import { Storage } from "../handlers/storage";
 
 export const UploadForm: React.FC = () => {
   const { state, dispatch } = useContext(AppContext) as AppContextType;
@@ -19,14 +19,25 @@ export const UploadForm: React.FC = () => {
 
   const handleOnSubmit = (event: any) => {
     event.preventDefault();
-    writeDoc(state.inputs, "stocks").then(console.log);
     if (state.inputs.title && state.inputs.path) {
-      dispatch({
-        type: AppActionKind.ADD_ITEM,
-        payload: {
-          item: { title: state.inputs.title, path: state.inputs.path },
-        },
-      });
+      Storage.uploadFile(state.inputs)
+        .then(Storage.downloadFile)
+        .then((url) => {
+          FireStore.writeDoc({ ...state.inputs, path: url }, "stocks").then(
+            (createdAt) => {
+              dispatch({
+                type: AppActionKind.ADD_ITEM,
+                payload: {
+                  item: {
+                    title: state.inputs.title!,
+                    path: state.inputs.path!,
+                    createdAt,
+                  },
+                },
+              });
+            }
+          );
+        });
     }
   };
 
