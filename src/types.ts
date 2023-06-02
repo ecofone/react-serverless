@@ -15,6 +15,7 @@ export type eventTarget = {
 export enum AppActionKind {
   UPDATE_INPUT = "UPDATE_INPUT",
   ADD_ITEM = "ADD_ITEM",
+  ADD_ITEMS = "ADD_ITEMS",
   CHANGE_FORM_VISIBILITY = "CHANGE_FORM_VISIBILITY",
 }
 
@@ -33,6 +34,7 @@ export type AppActionPayload = {
   eventTarget?: eventTarget;
   item?: Item;
   isFormVisible?: boolean;
+  items?: Item[];
 };
 
 export type AppAction = {
@@ -43,4 +45,5 @@ export type AppAction = {
 export type AppContextType = {
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
+  fetchItems: () => void;
 };

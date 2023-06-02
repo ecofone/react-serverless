@@ -2,6 +2,8 @@ import { useContext, useMemo } from "react";
 import { AppActionKind, AppContextType } from "../types";
 import { Preview } from "./Preview";
 import { AppContext } from "./Context";
+import { FireStore } from "../handlers/firestore";
+const { writeDoc } = FireStore;
 
 export const UploadForm: React.FC = () => {
   const { state, dispatch } = useContext(AppContext) as AppContextType;
@@ -17,6 +19,7 @@ export const UploadForm: React.FC = () => {
 
   const handleOnSubmit = (event: any) => {
     event.preventDefault();
+    writeDoc(state.inputs, "stocks").then(console.log);
     if (state.inputs.title && state.inputs.path) {
       dispatch({
         type: AppActionKind.ADD_ITEM,

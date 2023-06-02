@@ -1,12 +1,14 @@
 import { List } from "./List";
 import { AppContextType } from "../types";
 import { Layout } from "./Layout";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AppContext } from "./Context";
 
 const App = () => {
-  const { state } = useContext(AppContext) as AppContextType;
-
+  const { state, fetchItems } = useContext(AppContext) as AppContextType;
+  useEffect(() => {
+    fetchItems();
+  }, []);
   return (
     <Layout>
       <h1>Gallery</h1>
