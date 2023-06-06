@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import Navbar from "./Navbar";
 import { UploadForm } from "./Uploadform";
 import { AppActionKind, AppContextType } from "../types";
-import { AppContext } from "./Context";
+import { AppContext } from "../context/FirestoreContext";
 
 export const Layout: React.FC<{
   children: any;

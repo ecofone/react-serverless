@@ -35,6 +35,7 @@ export const FireStore = {
           title: inputs.title,
           path: inputs.path,
           createdAt,
+          user: inputs.user,
         });
         resolve(createdAt);
       } catch (e) {

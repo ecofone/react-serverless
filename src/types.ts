@@ -23,6 +23,7 @@ export type Item = {
   title: string;
   path: string;
   createdAt: any;
+  user: string;
 };
 
 export type AppState = {
@@ -47,4 +48,11 @@ export type AppContextType = {
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
   fetchItems: () => void;
+};
+
+export type AuthContextType = {
+  login: () => void;
+  logout: () => void;
+  currentUser: any;
+  authenticate: any;
 };

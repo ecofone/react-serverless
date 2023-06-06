@@ -1,13 +1,15 @@
 import { List } from "./List";
-import { AppContextType } from "../types";
+import { AppContextType, AuthContextType } from "../types";
 import { Layout } from "./Layout";
 import { useContext, useEffect } from "react";
-import { AppContext } from "./Context";
-
+import { AppContext } from "../context/FirestoreContext";
+import { useAuthContext } from "../context/AuthContext";
 const App = () => {
   const { state, fetchItems } = useContext(AppContext) as AppContextType;
+  const { authenticate } = useAuthContext() as AuthContextType;
   useEffect(() => {
     fetchItems();
+    authenticate();
   }, []);
   return (
     <Layout>

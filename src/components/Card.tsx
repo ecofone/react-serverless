@@ -21,7 +21,7 @@ export const Card: React.FC<{ item: Item }> = ({ item }) => {
         <h5 className="text-center">{item.title}</h5>
         <div className="d-flex justify-content-between p-2">
           <p>{creationDate}</p>
-          <i>@username</i>
+          <i>@{item.user || "anonym"}</i>
         </div>
       </div>
     </div>

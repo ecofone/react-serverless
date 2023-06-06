@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Card } from "./Card";
 import { AppContextType } from "../types";
-import { AppContext } from "./Context";
+import { AppContext } from "../context/FirestoreContext";
 
 export const List: React.FC = () => {
   const { state } = useContext(AppContext) as AppContextType;

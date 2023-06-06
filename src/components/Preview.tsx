@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { AppContextType } from "../types";
-import { AppContext } from "./Context";
+import { AppContext } from "../context/FirestoreContext";
 
 export const Preview: React.FC = () => {
   const { state } = useContext(AppContext) as AppContextType;

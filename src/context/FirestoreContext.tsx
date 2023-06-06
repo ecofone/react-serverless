@@ -63,7 +63,7 @@ const reducer = (state: AppState, action: AppAction): AppState => {
   }
 };
 
-export const Provider: React.FC<{ children: React.ReactNode }> = ({
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);

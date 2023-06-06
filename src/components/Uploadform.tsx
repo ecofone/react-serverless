@@ -1,12 +1,16 @@
 import { useContext, useMemo } from "react";
-import { AppActionKind, AppContextType } from "../types";
+import { AppActionKind, AppContextType, AuthContextType } from "../types";
 import { Preview } from "./Preview";
-import { AppContext } from "./Context";
+import { AppContext } from "../context/FirestoreContext";
 import { FireStore } from "../handlers/firestore";
 import { Storage } from "../handlers/storage";
+import { useAuthContext } from "../context/AuthContext";
 
 export const UploadForm: React.FC = () => {
-  const { state, dispatch } = useContext(AppContext) as AppContextType;
+  const { state, dispatch, fetchItems } = useContext(
+    AppContext
+  ) as AppContextType;
+  const { currentUser } = useAuthContext() as AuthContextType;
 
   const handleOnChange = (event: any) => {
     if (event.target.name) {
@@ -17,26 +21,19 @@ export const UploadForm: React.FC = () => {
     }
   };
 
+  const username = currentUser?.displayName.split(" ").join("").toLowerCase();
   const handleOnSubmit = (event: any) => {
     event.preventDefault();
     if (state.inputs.title && state.inputs.path) {
       Storage.uploadFile(state.inputs)
         .then(Storage.downloadFile)
         .then((url) => {
-          FireStore.writeDoc({ ...state.inputs, path: url }, "stocks").then(
-            (createdAt) => {
-              dispatch({
-                type: AppActionKind.ADD_ITEM,
-                payload: {
-                  item: {
-                    title: state.inputs.title!,
-                    path: state.inputs.path!,
-                    createdAt,
-                  },
-                },
-              });
-            }
-          );
+          FireStore.writeDoc(
+            { ...state.inputs, path: url, user: username },
+            "stocks"
+          ).then(() => {
+            fetchItems();
+          });
         });
     }
   };
