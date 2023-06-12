@@ -14,9 +14,9 @@ export type eventTarget = {
 
 export enum AppActionKind {
   UPDATE_INPUT = "UPDATE_INPUT",
-  ADD_ITEM = "ADD_ITEM",
-  ADD_ITEMS = "ADD_ITEMS",
+  SET_ITEMS = "SET_ITEMS",
   CHANGE_FORM_VISIBILITY = "CHANGE_FORM_VISIBILITY",
+  FILTER_ITEMS = "FILTER_ITEMS",
 }
 
 export type Item = {
@@ -30,6 +30,7 @@ export type Item = {
 export type AppState = {
   inputs: Input;
   items: Item[];
+  itemsFromDB: Item[];
   isFormVisible: boolean;
 };
 
@@ -38,6 +39,7 @@ export type AppActionPayload = {
   item?: Item;
   isFormVisible?: boolean;
   items?: Item[];
+  filteredItems?: Item[];
 };
 
 export type AppAction = {
@@ -49,6 +51,7 @@ export type AppContextType = {
   state: AppState;
   dispatch: React.Dispatch<AppAction>;
   fetchItems: () => void;
+  filterItems: (search: string) => void;
 };
 
 export type AuthContextType = {

@@ -17,6 +17,7 @@ const initialState: AppState = {
     path: null,
   },
   items: [],
+  itemsFromDB: [],
   isFormVisible: false,
 };
 
@@ -34,32 +35,28 @@ const reducer = (state: AppState, action: AppAction): AppState => {
               path: URL.createObjectURL(action.payload.eventTarget?.files[0]),
             };
       return { ...state, inputs };
-    case AppActionKind.ADD_ITEMS:
-      return action.payload.items
-        ? {
-            ...state,
-            items: [...action.payload.items],
-          }
-        : { ...state };
-    case AppActionKind.ADD_ITEM:
-      return state.inputs.path
-        ? {
-            inputs: {
-              title: null,
-              file: null,
-              path: null,
-            },
-            items: action.payload.item
-              ? [...state.items, { ...action.payload.item }]
-              : [...state.items],
-            isFormVisible: false,
-          }
-        : { ...state };
+    case AppActionKind.SET_ITEMS:
+      const newItems = action.payload.items ? action.payload.items : [];
+      return {
+        ...state,
+        items: [...newItems],
+        itemsFromDB: [...newItems],
+      };
+    case AppActionKind.FILTER_ITEMS:
+      return {
+        ...state,
+        items: [
+          ...(action.payload.filteredItems ? action.payload.filteredItems : []),
+        ],
+      };
+
     case AppActionKind.CHANGE_FORM_VISIBILITY:
       return {
         ...state,
         isFormVisible: action.payload.isFormVisible ?? !state.isFormVisible,
       };
+    default:
+      return { ...state };
   }
 };
 
@@ -69,10 +66,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [state, dispatch] = useReducer(reducer, initialState);
   const fetchItems = async () => {
     const items = await readDocs("stocks");
-    dispatch({ type: AppActionKind.ADD_ITEMS, payload: { items } });
+    dispatch({ type: AppActionKind.SET_ITEMS, payload: { items } });
+  };
+  const filterItems = (search: string) => {
+    if (!search || search === "") {
+      dispatch({
+        type: AppActionKind.SET_ITEMS,
+        payload: { items: state.itemsFromDB },
+      });
+    } else {
+      const filteredItems = state.items.filter((item) =>
+        item.title.toLowerCase().includes(search.toLowerCase())
+      );
+      dispatch({
+        type: AppActionKind.FILTER_ITEMS,
+        payload: { filteredItems },
+      });
+    }
   };
   return (
-    <AppContext.Provider value={{ state, dispatch, fetchItems }}>
+    <AppContext.Provider value={{ state, dispatch, fetchItems, filterItems }}>
       {children}
     </AppContext.Provider>
   );
