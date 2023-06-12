@@ -1,15 +1,15 @@
-import React, { useContext } from "react";
 import { Card } from "./Card";
-import { AppContextType } from "../types";
-import { AppContext } from "../context/FirestoreContext";
+import { Item } from "../types";
 
-export const List: React.FC = () => {
-  const { state } = useContext(AppContext) as AppContextType;
+export const List: React.FC<{ items: Item[] }> = ({ items }) => {
   return (
-    <div className="row">
-      {state.items.map((item, index) => (
-        <Card key={index} item={item} />
-      ))}
-    </div>
+    <>
+      {`You have ${items.length} images`}
+      <div className="row">
+        {items.map((item, index) => (
+          <Card key={index} item={item} />
+        ))}
+      </div>
+    </>
   );
 };

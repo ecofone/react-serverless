@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { AuthContextType } from "../types";
+import { Link } from "react-router-dom";
 
 const LogIn = () => {
   const { login, currentUser } = useAuthContext() as AuthContextType;
@@ -69,7 +70,8 @@ export const UserMenu: React.FC = () => {
         <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
           <li>
             <a className="dropdown-item text-center" href="#">
-              {username}
+              {currentUser && <Link to="/profile">{username}</Link>}
+              {!currentUser && <p>{username}</p>}
             </a>
             <li>
               <hr className="dropdown divider"></hr>

@@ -24,6 +24,7 @@ export type Item = {
   path: string;
   createdAt: any;
   user: string;
+  id: string;
 };
 
 export type AppState = {

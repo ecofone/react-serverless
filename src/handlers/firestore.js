@@ -16,7 +16,7 @@ export const FireStore = {
         const ref = collection(db, collectionName);
         const snapshots = await getDocs(ref);
         snapshots.forEach((doc) => {
-          docs.push({ ...doc.data() });
+          docs.push({ ...doc.data(), id: doc.id });
         });
         resolve(docs);
       } catch (e) {
